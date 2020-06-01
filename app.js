@@ -38,12 +38,12 @@
 
     reportList.getCSV = function(){
       //console.log(fileName + " fileName parameter");
-      let f = ReportTimeService.getDateTime() + '_Li' + this.line + '_' + this.direction + '.csv';
+      let f = ReportTimeService.getDateTime() + '_BEP-Report.csv';
       let newchar = '-';
       f = f.split(':').join(newchar);
       console.log(f);
 
-      ReportTimeService.downloadCSV({filename: f, annotation: this.annotation});
+      ReportTimeService.downloadCSV({filename: f});
     };
 
     reportList.editZNr = function(itemID, znr){
@@ -116,14 +116,14 @@
 
     service.getDateTime = function(){
       let firstItem = this.getReportItems()[0];
-      let ymd = firstItem.timestamp.getFullYear() + "-" + (1+ firstItem.timestamp.getMonth()).toLocaleString(undefined, {minimumIntegerDigits: 2}) + "-" + firstItem.timestamp.getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
-      return (ymd + '_' + firstItem.time);
+      let ymd = firstItem.created.getFullYear() + "-" + (1+ firstItem.created.getMonth()).toLocaleString(undefined, {minimumIntegerDigits: 2}) + "-" + firstItem.created.getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
+      return (ymd + '_' + firstItem.timeclock_created);
     };
 
     service.downloadCSV = function(args) {
       let data, filename, link;
       let tempReport = Object.create(reportItems);
-      tempReport.push({id: '', type: '', timestamp: '', date: '', time: '', relativeTime: '', comment: args.annotation, passenger: ''});
+      tempReport.push({id: '', znr: '', vt: '', start: '', end: '', created: '', date_created: '', timeclock_created: '', istart: '', iend: '', difference_sec: ''});
 
       let csv = convertArrayOfObjectsToCSV({
           data: tempReport
