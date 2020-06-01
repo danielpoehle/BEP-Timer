@@ -13,16 +13,25 @@
   ReportsController.$inject = ['ReportTimeService'];
   function ReportsController(ReportTimeService){
     let reportList = this;
+    const options = { year: '2-digit', month: '2-digit', day: '2-digit' };
 
-    reportList.comment = '';
-    reportList.line = '';
-    reportList.direction = '';
-    reportList.annotation = '';
+    reportList.ZNr = '';
+    reportList.today = new Date().toLocaleDateString('de-DE', options);
 
-    reportList.addToList = function(type){
+    reportList.tomorrow = new Date();
+    reportList.tomorrow.setDate(reportList.tomorrow.getDate() + 1);
+    reportList.tomorrow = reportList.tomorrow.toLocaleDateString('de-DE', options);
+
+    reportList.d_a_tomorrow = new Date();
+    reportList.d_a_tomorrow.setDate(reportList.d_a_tomorrow.getDate() + 2);
+    reportList.d_a_tomorrow = reportList.d_a_tomorrow.toLocaleDateString('de-DE', options);
+
+
+    reportList.addToList = function(znr){
       //console.log(type + " clicked add to List");
       //console.log(lineFrame[0]);
-      ReportTimeService.addReportItem(type);
+      ReportTimeService.addReportItem(znr);
+      reportList.ZNr = '';
     };
 
     reportList.items = ReportTimeService.getReportItems();
@@ -37,33 +46,29 @@
       ReportTimeService.downloadCSV({filename: f, annotation: this.annotation});
     };
 
-    reportList.addComment = function(itemID, comment){
-      ReportTimeService.addComment(itemID, comment);
-      reportList.comment = '';
+    reportList.editZNr = function(itemID, znr){
+      ReportTimeService.editZNr(itemID, znr);
+      reportList.ZNr = '';
+    };
+
+    reportList.setVT = function(itemID, vt){
+      ReportTimeService.setVT(itemID, vt);
     };
 
     reportList.removeItem = function(itemID){
       console.log(itemID + " item ID in reportList");
 
       ReportTimeService.remove(itemID);
-      ReportTimeService.correctRelativeTimes();
-      reportList.numPass = parseInt(ReportTimeService.getPassengers());
     };
 
-    reportList.filling = 0;
-
-    reportList.changeFilling = function(value){
-      this.filling += value;
-      if (this.filling < 0) {this.filling = 0;}
+    reportList.setStart = function(itemID){
+      ReportTimeService.setStart(itemID, new Date());
     };
 
-    reportList.addFilling = function(itemID, filling){
-      ReportTimeService.addFilling(itemID, filling);
-      reportList.numPass = parseInt(ReportTimeService.getPassengers());
-      reportList.filling = 0;
-    }
+    reportList.setEnd = function(itemID){
+      ReportTimeService.setEnd(itemID, new Date());
+    };
 
-    reportList.numPass = parseInt(ReportTimeService.getPassengers());
 
   }
 
@@ -73,24 +78,30 @@
     let service = this;
     let reportItems = [];
 
-    service.addReportItem = function(type){
+    service.addReportItem = function(znr){
       //console.log(reportItems.length + " length of items before");
-      let relativeTime = 0;
+      //let relativeTime = 0;
       let id = 1;
-      let time = new Date();
-      let comment = '';
-      let pass = 0;
+      let created = new Date();
+      let vt = '';
+      let start = '';
+      let i_start = '';
+      let end = '';
+      let i_end = '';
+      let difference_sec = 0;
       if(reportItems.length > 0){
         // in seconds
-        relativeTime = Math.floor(time/1000) - Math.floor(reportItems[reportItems.length - 1].timestamp / 1000);
+        //relativeTime = Math.floor(time/1000) - Math.floor(reportItems[reportItems.length - 1].timestamp / 1000);
         id = reportItems[reportItems.length - 1].id + 1;
       }
       //console.log(relativeTime + " relativeTime");
       //console.log(time + " time");
-      let date = time.toLocaleDateString();
-      let timeclock = time.toLocaleTimeString();
+      let date_created = created.toLocaleDateString();
+      let timeclock_created = created.toLocaleTimeString();
 
-      reportItems.push({id: id, type: type, timestamp: time, date: date, time: timeclock, relativeTime: relativeTime, comment: comment, passenger: pass});
+      reportItems.push({id: id, znr: znr, vt: vt, start: start, end: end, created: created, 
+        date_created: date_created, timeclock_created: timeclock_created, 
+        istart: i_start, iend: i_end, difference_sec: difference_sec});
       //console.log(reportItems.length + " length of items after");
       //console.log(reportItems);
 
@@ -140,33 +151,27 @@
       reportItems.splice(index, 1);
     };
 
-    service.addComment = function(id, text){
+    service.editZNr = function(id, znr){
       let index = reportItems.findIndex(x => x.id== id);
-      reportItems[index].comment = text;
+      reportItems[index].znr = znr;
     };
 
-    service.addFilling = function(id, val){
+    service.setVT = function(id, vt){
       let index = reportItems.findIndex(x => x.id== id);
-      reportItems[index].passenger = val;
+      reportItems[index].vt = vt;
     };
 
-    service.getPassengers = function(){
-      let sum = 0;
-      for (let i = 0, len = reportItems.length; i < len; i++) {
-        sum += parseInt(reportItems[i].passenger);
-      }
-      return sum;
-    }
+    service.setStart = function(id, time){
+      let index = reportItems.findIndex(x => x.id== id);
+      reportItems[index].start = time.toLocaleTimeString();
+      reportItems[index].istart = time;
+    };
 
-    service.correctRelativeTimes = function(){
-      for (var i = 1; i < (reportItems.length); i++) {
-        reportItems[i].relativeTime = Math.floor(reportItems[i].timestamp/1000) - Math.floor(reportItems[i-1].timestamp / 1000);
-      }
-    }
-
-    //service.getBoughtItems = function(){
-    //  return boughtItems;
-    //};
+    service.setEnd = function(id, time){
+      let index = reportItems.findIndex(x => x.id== id);
+      reportItems[index].end = time.toLocaleTimeString();
+      reportItems[index].iend = time;
+    };
   }
 
   function convertArrayOfObjectsToCSV(args) {

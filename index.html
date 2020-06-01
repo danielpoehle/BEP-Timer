@@ -26,14 +26,13 @@
               BEP-Timer |
               <i class="fas fa-list-alt"></i>
               <i class="fas fa-search"></i>
-              <i class="fas fa-stopwatch-20"></i>
+              <i class="fas fa-stopwatch"></i>
             </h1>
           </div>
           <div class="page-header col-md-1">
             <img src="Db-netze.png" class="img-fluid" alt="DB Netz AG Logo">
           </div>
 
-          <hr>
 
           <div class="col-md-9 col-md-offset-3">
 
@@ -44,8 +43,8 @@
                 <label>Zugnummer</label>
                 <input type="text" class="form-control" ng-model="reportList.ZNr" placeholder="Zugnummer eingeben">
 
-                <button type="button" class="btn btn-secondary" ng-click="reportList.addToList('Dep');">
-                  <i class="far fa-plus-square"></i>
+                <button type="button" class="btn btn-primary" ng-click="reportList.addToList(reportList.ZNr);">
+                  <i class="fas fa-plus"></i>
                   Eintrag hinzufügen
                 </button>
               </div>
@@ -70,32 +69,42 @@
               <tbody>
                   <tr ng-repeat="item in reportList.items | orderBy: '-id'">
                     <th scope="row">{{item.id}}</th>
-                    <td>{{item.type}}</td>
-                    <td>{{item.time}}</td>
-                    <td>{{item.relativeTime}}</td>
-                    <td>{{item.comment}}
-                      <button type="button" class="btn btn-dark btn-sm" aria-label="Comment" ng-click="reportList.addComment(item.id, reportList.comment);">
-                      <span class="fa fa-comment" aria-hidden="true"></span>
+                    <td>
+                      {{item.znr}}
+                      <button type="button" class="btn btn-dark btn-sm" aria-label="Edit" ng-click="reportList.editZNr(item.id, reportList.ZNr);">
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+                    </td>
+                    <td>                      
+                      {{item.vt}}
+                      <button type="button" class="btn btn-dark btn-sm" aria-label="today" ng-click="reportList.setVT(item.id, reportList.today);">
+                        {{reportList.today}}
+                      </button>
+                      <button type="button" class="btn btn-dark btn-sm" aria-label="tomorrow" ng-click="reportList.setVT(item.id, reportList.tomorrow);">
+                        {{reportList.tomorrow}}
+                      </button>
+                      <button type="button" class="btn btn-dark btn-sm" aria-label="da_tomorrow" ng-click="reportList.setVT(item.id, reportList.d_a_tomorrow);">
+                        {{reportList.d_a_tomorrow}}
                       </button>
                     </td>
                     <td>
-                      <button type="button" class="btn btn-danger btn-sm" aria-label="Remove" ng-click="reportList.removeItem(item.id);">
-                        <i class="far fa-trash-alt"></i>
-                      </button>
+                      {{item.start}}
+                      <button type="button" class="btn btn-dark btn-sm" aria-label="Start" ng-click="reportList.setStart(item.id);">
+                        <i class="fas fa-play"></i>
+                      </button>                      
                     </td>
                     <td>
                       <label ng-hide="item.passenger == 0">
                         {{item.passenger}}
                       </label>
-                      <button type="button" class="btn btn-primary btn-sm" aria-label="out" ng-show="item.type == 'Arr'" ng-click="reportList.addFilling(item.id, -reportList.filling);">
-                      <span class="fa fa-bus" aria-hidden="true"></span>
-                      <span class="fa fa-arrow-circle-right" aria-hidden="true"></span>
-                      <span class="fa fa-users" aria-hidden="true"></span>
+                      {{item.end}}
+                      <button type="button" class="btn btn-dark btn-sm" aria-label="End" ng-click="reportList.setEnd(item.id);">
+                        <i class="fas fa-stop"></i>
                       </button>
-                      <button type="button" class="btn btn-secondary btn-sm" aria-label="in" ng-show="item.type == 'Dep'" ng-click="reportList.addFilling(item.id, reportList.filling);">
-                      <span class="fa fa-bus" aria-hidden="true"></span>
-                      <span class="fa fa-arrow-circle-left" aria-hidden="true"></span>
-                      <span class="fa fa-users" aria-hidden="true"></span>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-danger btn-sm" aria-label="Remove" ng-click="reportList.removeItem(item.id);">
+                        <i class="far fa-trash-alt"></i>
                       </button>
                     </td>
                   </tr>
