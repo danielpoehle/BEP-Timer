@@ -89,6 +89,8 @@
       let end = '';
       let i_end = '';
       let difference_sec = 0;
+      let show_st = 1;
+      let show_en = 0;
       if(reportItems.length > 0){
         // in seconds
         //relativeTime = Math.floor(time/1000) - Math.floor(reportItems[reportItems.length - 1].timestamp / 1000);
@@ -99,8 +101,8 @@
       let date_created = created.toLocaleDateString();
       let timeclock_created = created.toLocaleTimeString();
 
-      reportItems.push({id: id, znr: znr, vt: vt, start: start, end: end, created: created, 
-        date_created: date_created, timeclock_created: timeclock_created, 
+      reportItems.push({id: id, znr: znr, vt: vt, start: start, end: end, show_st: show_st, show_en: show_en,
+        created: created, date_created: date_created, timeclock_created: timeclock_created, 
         istart: i_start, iend: i_end, difference_sec: difference_sec});
       //console.log(reportItems.length + " length of items after");
       //console.log(reportItems);
@@ -165,12 +167,17 @@
       let index = reportItems.findIndex(x => x.id== id);
       reportItems[index].start = time.toLocaleTimeString();
       reportItems[index].istart = time;
+      reportItems[index].show_st = 0;
+      reportItems[index].show_en = 1;
     };
 
     service.setEnd = function(id, time){
       let index = reportItems.findIndex(x => x.id== id);
       reportItems[index].end = time.toLocaleTimeString();
       reportItems[index].iend = time;
+      //console.log(time/1000 - reportItems[index].istart/1000);
+      reportItems[index].difference_sec = Math.floor(time/1000) - Math.floor(reportItems[index].istart/1000);
+      reportItems[index].show_en = 0;
     };
   }
 

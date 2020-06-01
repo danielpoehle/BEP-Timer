@@ -89,7 +89,7 @@
                     </td>
                     <td>
                       {{item.start}}
-                      <button type="button" class="btn btn-dark btn-sm" aria-label="Start" ng-click="reportList.setStart(item.id);">
+                      <button type="button" class="btn btn-dark btn-sm" ng-show="item.show_st == 1" aria-label="Start" ng-click="reportList.setStart(item.id);">
                         <i class="fas fa-play"></i>
                       </button>                      
                     </td>
@@ -98,7 +98,7 @@
                         {{item.passenger}}
                       </label>
                       {{item.end}}
-                      <button type="button" class="btn btn-dark btn-sm" aria-label="End" ng-click="reportList.setEnd(item.id);">
+                      <button type="button" class="btn btn-dark btn-sm" ng-show="item.show_en == 1" aria-label="End" ng-click="reportList.setEnd(item.id);">
                         <i class="fas fa-stop"></i>
                       </button>
                     </td>
