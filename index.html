@@ -94,9 +94,7 @@
                       </button>                      
                     </td>
                     <td>
-                      <label ng-hide="item.passenger == 0">
-                        {{item.passenger}}
-                      </label>
+                      <i class="fas fa-circle-notch fa-spin" ng-show="item.show_sp == 1"></i>
                       {{item.end}}
                       <button type="button" class="btn btn-dark btn-sm" ng-show="item.show_en == 1" aria-label="End" ng-click="reportList.setEnd(item.id);">
                         <i class="fas fa-stop"></i>
